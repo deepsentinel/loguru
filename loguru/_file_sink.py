@@ -109,7 +109,7 @@ class FileSink:
         def get_creation_time_linux(filepath):
             try:
                 return float(os.getxattr(filepath, b"user.loguru_crtime"))
-            except OSError:
+            except (OSError, AttributeError):
                 return os.stat(filepath).st_mtime
 
         if os.name == "nt":
