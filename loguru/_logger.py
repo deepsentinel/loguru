@@ -1557,7 +1557,19 @@ class Logger:
 
         (exception, depth, record, lazy, ansi, raw, patcher, extra) = options
 
-        frame = get_frame(depth + 2)
+        try:
+            frame = get_frame(depth + 2)
+        except:
+            # this is a hack for Cython compiled version
+            # https://github.com/Delgan/loguru/issues/88
+            # maintainer suggest using "logger.opt(depth=-1)" as workaround
+            # but let's do this for now
+            for d in range(depth + 1, 0, -1):
+                try:
+                    frame = get_frame(d)
+                    break
+                except:
+                    pass
 
         try:
             name = frame.f_globals["__name__"]
